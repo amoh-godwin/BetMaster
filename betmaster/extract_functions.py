@@ -1,9 +1,10 @@
 # 11th September, 2022
 # Amoh-Gyebi Ampofo
+from pprint import pp
 import requests
 import re
 from dataclasses import dataclass
-from typing import List
+from typing import List, Tuple
 
 # from bs4 import BeautifulSoup
 
@@ -13,6 +14,13 @@ class Team:
     id: int
     name: str
     date: int
+
+
+@dataclass
+class Scores:
+    name: int
+    gf: tuple
+    ga: tuple
 
 
 def extract_footlive_tomorrow() -> List:
@@ -27,11 +35,11 @@ def extract_footlive_tomorrow() -> List:
         conts = fr.read()
 
     reg = r"data-id=['|\"].*?['|\"] data-date=['|\"].*?['|\"] "
-    reg += r"data-team1=['|\"].*?['|\"] data-team2=['|\"].*?['|\"]"
+    reg += r"data-slug1=['|\"].*?['|\"] data-slug2=['|\"].*?['|\"]"
     all = re.findall(reg, conts)
     for x in all:
         teams.extend(extract_team_data(x))
-    
+
     print(teams)
 
 
@@ -39,10 +47,51 @@ def extract_team_data(div: str) -> List:
     br = div.replace('\\', '')
     id = re.findall(r"id=['|\"].*?['|\"]", br)[0][4:-1]
     date = re.findall(r"date=['|\"].*?['|\"]", br)[0][6:-1]
-    t1 = re.findall(r"team1=['|\"].*?['|\"]", br)[0][7:-1]
-    t2 = re.findall(r"team2=['|\"].*?['|\"]", br)[0][7:-1]
+    t1 = re.findall(r"slug1=['|\"].*?['|\"]", br)[0][7:-1]
+    t2 = re.findall(r"slug2=['|\"].*?['|\"]", br)[0][7:-1]
     teams = [Team(int(id), t1, int(date)), Team(int(id), t2, int(date))]
     return teams
 
 
+def extract_team_scores(name: str) -> Scores:
+    scores = []
+    sgf = []
+    sga = []
+    """ req = requests.get(f'http://www.footlive.com/team/{name}/')
+    conts = req.text
+
+    with open('goals.txt', 'wb') as fb:
+        fb.write(req.content) """
+
+    with open('goals.txt', 'r') as fr:
+        conts = fr.read()
+
+    reg = r"data-id=['|\"].*?['|\"] data-status=['|\"]FT['|\"]"
+    reg += r".*?data-slug2=['|\"].*?['|\"]"
+    all = re.findall(reg, conts)
+    for x in all:
+        gf, ga = extract_goals(x, name)
+        sgf.append(gf)
+        sga.append(ga)
+
+
+    return Scores(name, tuple(sgf), tuple(sga))
+
+
+def extract_goals(div: str, team_name: str) -> Tuple:
+    br = div.replace('\\', '')
+    id = re.findall(r"id=['|\"].*?['|\"]", br)[0][4:-1]
+    s1 = re.findall(r"score1=['|\"].*?['|\"]", br)[0][8:-1]
+    s2 = re.findall(r"score2=['|\"].*?['|\"]", br)[0][8:-1]
+    t1 = re.findall(r"slug1=['|\"].*?['|\"]", br)[0][7:-1]
+    t2 = re.findall(r"slug2=['|\"].*?['|\"]", br)[0][7:-1]
+    
+    if team_name == t1:
+        gf = s1
+        ga = s2
+    else:
+        gf = s2
+        ga = s1
+
+    return (int(gf), int(ga))
 

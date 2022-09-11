@@ -1,6 +1,5 @@
 import requests
-from betmaster.extract_functions import extract_footlive_tomorrow
 
-from extract_functions import extract_footlive_notstarted
+from extract_functions import extract_footlive_tomorrow, extract_team_scores
 
-extract_footlive_tomorrow()
+extract_team_scores('bkma-yerevan')
