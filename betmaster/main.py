@@ -3,11 +3,10 @@
 import requests
 
 from extract_functions import extract_footlive_tomorrow, extract_team_scores
-from calculate_functions import over_under_evaluation, most_recent_over_under
+from summary_functions import over_under_summary
 
 scores = extract_team_scores('bkma-yerevan')
-ev = over_under_evaluation(scores.ga)
-most_recent_over_under(scores.ga)
+bkma_sum = over_under_summary(scores)
 
-print(ev)
+print(bkma_sum)
 
