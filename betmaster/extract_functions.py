@@ -15,7 +15,7 @@ class Team:
     date: int
 
 
-def extract_footlive_notstarted() -> List:
+def extract_footlive_tomorrow() -> List:
     teams = []
     #req = requests.get('http://www.footlive.com/tomorrow/')
     #conts = req.text
