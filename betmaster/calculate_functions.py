@@ -77,5 +77,4 @@ def most_recent_over_under(scores: tuple) -> tuple:
     t_ten = scores[l-11]
     f_min_max = min_max(five, t_five)
     t_min_max = min_max(ten, t_ten)
-    print(f'five: {f_min_max}')
-    print(f'ten: {t_min_max}')
+    return f_min_max, t_min_max
