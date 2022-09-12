@@ -60,8 +60,8 @@ def over_under_evaluation(scores: tuple) -> Tuple[bool, bool]:
 def min_max(group_score: tuple, test_score: int) -> tuple:
     # Get the under and over of the predicted scores
     # and see which of the prediction was True
-    maxx = max(group_score) + 1.5
-    minn = min(group_score) - 0.5
+    maxx = max(group_score) + OVER_ADD
+    minn = min(group_score) - UNDER_MINUS
     under_rate, over_rate = (False, False)
     if test_score < maxx:
         under_rate = True
