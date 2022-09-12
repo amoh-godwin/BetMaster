@@ -7,6 +7,7 @@ from dataclasses import asdict, dataclass
 from typing import List, Tuple, Dict
 
 from storage_functions import temp_store_games, get_store_team_games
+from internet_functions import get_team_data
 
 
 @dataclass
@@ -18,6 +19,15 @@ class Game:
     team2: str
     score1: int
     score2: int
+
+
+@dataclass
+class HomeAwayScore:
+    name: str
+    home_gf: tuple
+    home_ga: tuple
+    away_gf: tuple
+    away_ga: tuple
 
 
 @dataclass
@@ -48,14 +58,14 @@ def extract_data(div: str) -> Tuple[int, int, int, int, str, str]:
 
 def extract_footlive_tomorrow() -> List:
     teams = []
-    #req = requests.get('http://www.footlive.com/tomorrow/')
-    #conts = req.text
+    req = requests.get('http://www.footlive.com/tomorrow/')
+    conts = req.text
 
-    """ with open('ff.txt', 'wb') as fb:
-        fb.write(req.content) """
+    with open('ff.txt', 'wb') as fb:
+        fb.write(req.content)
 
-    with open('ff.txt', 'r') as fr:
-        conts = fr.read()
+    """ with open('ff.txt', 'r') as fr:
+        conts = fr.read() """
 
     reg = r"data-id=['|\"].*?['|\"] data-date=['|\"].*?['|\"] "
     reg += r"data-slug1=['|\"].*?['|\"] data-slug2=['|\"].*?['|\"]"
@@ -85,7 +95,7 @@ def extract_game(div: str, team_name: str) -> Game:
 
 
 def extract_h2h(team1: str, team2: str, low_year: int = 2020) -> Tuple[List, Dict]:
-    print(team1, team2, low_year)
+    team_names = (team1, team2)
     t1_games = get_store_team_games(team1)
     t2_games = get_store_team_games(team2)
     t1_ids = set()
@@ -93,21 +103,26 @@ def extract_h2h(team1: str, team2: str, low_year: int = 2020) -> Tuple[List, Dic
     games = []
     team_goals = {team1: set(), team2: set() }
 
-    for x in t1_games:
-        t1_ids.add(x['id'])
-    for y in t2_games:
-        t2_ids.add(y['id'])
-
-    inter = t1_ids.intersection(t2_ids)
     today = int(datetime.now().timestamp())
 
     for x in t1_games:
-        if x['id'] in inter:
+        # if x['id'] in inter:
+        if x['team1'] in team_names and x['team2'] in team_names:
             year = int(datetime.fromtimestamp(x['date']).year)
             if x['date'] < today and year > low_year:
                 team_goals[x['team1']].add(x['score1'])
                 team_goals[x['team2']].add(x['score2'])
                 games.append((x['score1'], x['score2']))
+
+    for x in t2_games:
+        if x['team1'] in team_names and x['team2'] in team_names:
+            year = int(datetime.fromtimestamp(x['date']).year)
+            if x['date'] < today and year > low_year:
+                team_goals[x['team1']].add(x['score1'])
+                team_goals[x['team2']].add(x['score2'])
+                games.append((x['score1'], x['score2']))
+
+    print(games)
 
     return (games, team_goals)
 
@@ -123,15 +138,8 @@ def extract_team_scores(name: str) -> Scores:
     games = []
     sgf = []
     sga = []
-    fn = name + "_goals.txt"
-    """ req = requests.get(f'http://www.footlive.com/team/{name}/')
-    conts = req.text
 
-    with open(fn, 'wb') as fb:
-        fb.write(req.content) """
-
-    with open(fn, 'r') as fr:
-        conts = fr.read()
+    conts = get_team_data(name)
 
     reg = r"data-id=['|\"].*?['|\"] data-status=['|\"]FT['|\"]"
     reg += r".*?data-slug2=['|\"].*?['|\"]"
