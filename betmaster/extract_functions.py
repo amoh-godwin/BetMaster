@@ -34,6 +34,17 @@ class Scores:
     ga: tuple
 
 
+def extract_data(div: str) -> Tuple:
+    br = div.replace('\\', '')
+    id = re.findall(r"id=['|\"].*?['|\"]", br)[0][4:-1]
+    date = re.findall(r"date=['|\"].*?['|\"]", br)[0][6:-1]
+    s1 = re.findall(r"score1=['|\"].*?['|\"]", br)[0][8:-1]
+    s2 = re.findall(r"score2=['|\"].*?['|\"]", br)[0][8:-1]
+    t1 = re.findall(r"slug1=['|\"].*?['|\"]", br)[0][7:-1]
+    t2 = re.findall(r"slug2=['|\"].*?['|\"]", br)[0][7:-1]
+
+    return (int(id), int(date), int(s1), int(s2), t1, t2)
+
 
 def extract_footlive_tomorrow() -> List:
     teams = []
