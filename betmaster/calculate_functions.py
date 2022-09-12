@@ -1,10 +1,52 @@
 # 11th September, 2022
 # Amoh-Gyebi 
+from cgi import test
 from collections import Counter
 from typing import Tuple, List
 
 OVER_ADD = 1.5
 UNDER_MINUS = 0.5
+
+
+def match_over_under_evaluation(scores: tuple) -> Tuple[bool, bool]:
+    # check the score in groups of 2
+    # to see if the predictions were accurate
+    # Most recent scores fewer than 2
+    # are not included in evaluation
+    two = set()
+    under_rate = False # max
+    unders = []
+    under_percent = 0
+    over_rate = False # min
+    overs = []
+    over_percent = 0
+    counter = 0
+    overall_index = 0
+    for x in scores:
+        two.add(x)
+        counter += 1
+        if counter == 2:
+            try:
+                test_score = scores[overall_index + 1]
+            except:
+                test_score = -1
+            under_rate, over_rate = min_max(two, test_score)
+            unders.append(under_rate)
+            overs.append(over_rate)
+            # rating.append((under_rate, over_rate))
+            two = set()
+
+            counter = 0
+
+        overall_index += 1
+
+    count = Counter(overs)
+    count_u = Counter(unders)
+
+    over_percent = (count.get(True) / len(overs)) * 100
+    under_percent = (count_u.get(True) / len(unders)) * 100
+
+    return (over_percent, under_percent)
 
 
 def over_under_evaluation(scores: tuple) -> Tuple[bool, bool]:
@@ -30,7 +72,10 @@ def over_under_evaluation(scores: tuple) -> Tuple[bool, bool]:
         counter += 1
         ten_counter += 1
         if counter == 5:
-            test_score = scores[overall_index]
+            try:
+                test_score = scores[overall_index + 1]
+            except:
+                test_score = -1
             under_rate, over_rate = min_max(five, test_score)
             unders.append(under_rate)
             overs.append(over_rate)
@@ -40,26 +85,34 @@ def over_under_evaluation(scores: tuple) -> Tuple[bool, bool]:
             counter = 0
 
         if ten_counter == 10:
-            test_score = scores[overall_index + 1]
+            try:
+                test_score = scores[overall_index + 1]
+            except:
+                test_score = -1
             under_rate, over_rate = min_max(ten, test_score)
             ten_counter = 0
             rating.append((under_rate, over_rate))
             ten = set()
 
-        overall_index += 0
+        overall_index += 1
     
     count = Counter(overs)
     count_u = Counter(unders)
 
     over_percent = (count.get(True) / len(overs)) * 100
     under_percent = (count_u.get(True) / len(unders)) * 100
+    per = (over_percent + under_percent) / 2
 
-    return (over_percent, under_percent)
+    return (per)
 
 
 def min_max(group_score: tuple, test_score: int) -> Tuple:
     # Get the under and over of the predicted scores
     # and see which of the prediction was True
+
+    if test_score < 0:
+        return (None, None)
+
     maxx = max(group_score) + OVER_ADD
     minn = min(group_score) - UNDER_MINUS
     under_rate, over_rate = (False, False)
@@ -82,6 +135,22 @@ def most_recent_over_under(scores: tuple) -> Tuple:
     f_min_max = min_max(five, t_five)
     t_min_max = min_max(ten, t_ten)
     return f_min_max, t_min_max
+
+
+def predict_game_over_under(scores: list):
+
+    pred = []
+
+    for x in scores:
+        maxx = max(x) + OVER_ADD
+        minn = min(x) - UNDER_MINUS
+        pred.extend([maxx, minn])
+
+    pred = set(pred)
+    low = min(pred)
+    high = max(pred)
+
+    return (low, high)
 
 
 def predict_over_under(scores: tuple) -> List[Tuple[float, float]]:
