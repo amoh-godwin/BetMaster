@@ -106,7 +106,7 @@ def over_under_evaluation(scores: tuple) -> Tuple[bool, bool]:
     return (per)
 
 
-def min_max(group_score: tuple, test_score: int) -> Tuple:
+def min_max(group_score: tuple, test_score: int) -> Tuple[bool, bool]:
     # Get the under and over of the predicted scores
     # and see which of the prediction was True
 
