@@ -57,7 +57,7 @@ def over_under_evaluation(scores: tuple) -> Tuple[bool, bool]:
     return (over_percent, under_percent)
 
 
-def min_max(group_score: tuple, test_score: int) -> tuple:
+def min_max(group_score: tuple, test_score: int) -> Tuple:
     # Get the under and over of the predicted scores
     # and see which of the prediction was True
     maxx = max(group_score) + OVER_ADD
@@ -71,7 +71,7 @@ def min_max(group_score: tuple, test_score: int) -> tuple:
     return (under_rate, over_rate)
 
 
-def most_recent_over_under(scores: tuple) -> tuple:
+def most_recent_over_under(scores: tuple) -> Tuple:
     # Get the most recent prediction
     # and see it it was True
     l = len(scores)
