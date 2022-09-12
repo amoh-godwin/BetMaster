@@ -2,12 +2,12 @@
 # Amoh-Gyebi Ampofo
 import requests
 import re
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import List, Tuple
 
 
 @dataclass
-class Match:
+class Game:
     id: int
     date: int
     name: str
@@ -76,9 +76,9 @@ def extract_goals(div: str, team_name: str) -> Tuple:
     return (int(gf), int(ga))
 
 
-def extract_matches(div: str, team_name: str) -> Match:
+def extract_game(div: str, team_name: str) -> Game:
     id, date, s1, s2, t1, t2 = extract_data(div)
-    return Match(id, date, team_name, t1, t2, s1, s2)
+    return Game(id, date, team_name, t1, t2, s1, s2)
 
 
 def extract_team_data(div: str) -> List:
