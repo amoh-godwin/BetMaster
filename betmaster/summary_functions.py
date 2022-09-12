@@ -3,7 +3,7 @@
 from typing import Dict
 
 from extract_functions import extract_h2h
-from calculate_functions import over_under_evaluation, most_recent_over_under, predict_over_under
+from calculate_functions import *
 
 
 def over_under_summary(scores) -> Dict:
@@ -23,3 +23,8 @@ def over_under_summary(scores) -> Dict:
 
 def h2h_summary(team1: str, team2: str) -> Dict:
     goals, team_goals = extract_h2h(team1, team2)
+    # mou = match_over_under_evaluation(goals)
+    team1_ou = predict_over_under(tuple(team_goals[team1]))
+    team2_ou = predict_over_under(tuple(team_goals[team2]))
+    gou = predict_game_over_under(goals)
+    print(team1_ou, team2_ou, gou)
