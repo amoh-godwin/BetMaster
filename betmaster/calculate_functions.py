@@ -134,7 +134,9 @@ def most_recent_over_under(scores: tuple) -> Tuple:
     t_ten = scores[l-11]
     f_min_max = min_max(five, t_five)
     t_min_max = min_max(ten, t_ten)
-    return f_min_max, t_min_max
+    f_per = (f_min_max.count(True) / len(f_min_max)) * 100
+    t_per = (t_min_max.count(True) / len(t_min_max)) * 100
+    return f_per, t_per
 
 
 def predict_game_over_under(scores: list):
