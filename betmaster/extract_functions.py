@@ -89,6 +89,7 @@ def extract_team_data(div: str) -> List:
 
 def extract_team_scores(name: str) -> Scores:
     scores = []
+    games = []
     sgf = []
     sga = []
     """ req = requests.get(f'http://www.footlive.com/team/{name}/')
@@ -107,6 +108,7 @@ def extract_team_scores(name: str) -> Scores:
         gf, ga = extract_goals(x, name)
         sgf.append(gf)
         sga.append(ga)
+        games.append(asdict(extract_game(x, name)))
 
 
     return Scores(name, tuple(sgf), tuple(sga))
