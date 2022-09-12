@@ -34,7 +34,7 @@ class Scores:
     ga: tuple
 
 
-def extract_data(div: str) -> Tuple:
+def extract_data(div: str) -> Tuple[int, int, int, int, str, str]:
     br = div.replace('\\', '')
     id = re.findall(r"id=['|\"].*?['|\"]", br)[0][4:-1]
     date = re.findall(r"date=['|\"].*?['|\"]", br)[0][6:-1]
@@ -67,13 +67,8 @@ def extract_footlive_tomorrow() -> List:
 
 
 def extract_goals(div: str, team_name: str) -> Tuple:
-    br = div.replace('\\', '')
-    id = re.findall(r"id=['|\"].*?['|\"]", br)[0][4:-1]
-    s1 = re.findall(r"score1=['|\"].*?['|\"]", br)[0][8:-1]
-    s2 = re.findall(r"score2=['|\"].*?['|\"]", br)[0][8:-1]
-    t1 = re.findall(r"slug1=['|\"].*?['|\"]", br)[0][7:-1]
-    t2 = re.findall(r"slug2=['|\"].*?['|\"]", br)[0][7:-1]
-    
+    _, _, s1, s2, t1, t2 = extract_data(div)
+
     if team_name == t1:
         gf = s1
         ga = s2
@@ -84,16 +79,13 @@ def extract_goals(div: str, team_name: str) -> Tuple:
     return (int(gf), int(ga))
 
 
-def extract_matches(div: str) -> Match:
-    pass
+def extract_matches(div: str, team_name: str) -> Match:
+    id, date, s1, s2, t1, t2 = extract_data(div)
+    return Match(id, date, team_name, t1, t2, s1, s2)
 
 
 def extract_team_data(div: str) -> List:
-    br = div.replace('\\', '')
-    id = re.findall(r"id=['|\"].*?['|\"]", br)[0][4:-1]
-    date = re.findall(r"date=['|\"].*?['|\"]", br)[0][6:-1]
-    t1 = re.findall(r"slug1=['|\"].*?['|\"]", br)[0][7:-1]
-    t2 = re.findall(r"slug2=['|\"].*?['|\"]", br)[0][7:-1]
+    id, date, s1, s2, t1, t2 = extract_data(div)
     teams = [Team(int(id), t1, int(date)), Team(int(id), t2, int(date))]
     return teams
 
