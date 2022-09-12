@@ -1,12 +1,9 @@
 # 11th September, 2022
 # Amoh-Gyebi Ampofo
-from pprint import pp
 import requests
 import re
 from dataclasses import dataclass
 from typing import List, Tuple
-
-# from bs4 import BeautifulSoup
 
 
 @dataclass
