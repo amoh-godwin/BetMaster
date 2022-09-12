@@ -14,7 +14,7 @@ def over_under_summary(scores) -> Dict:
     p5, p10 = predict_over_under(scores.gf)
     pa5, pa10 = predict_over_under(scores.ga)
     return {
-        'GF': gfou, 'GA': gaou, 
+        'GF': gfou, 'GA': gaou,
         'Recent GF(5)': mrgf_5, 'Recent GF(10)': mrgf_10, 
         'Recent GA(5)': mrga_5, 'Recent GA(10)': mrga_10,
         'Predicted GF(5)': p5, 'Predicted GF(10)': p10,
@@ -27,4 +27,4 @@ def h2h_summary(team1: str, team2: str) -> Dict:
     team1_ou = predict_over_under(tuple(team_goals[team1]))
     team2_ou = predict_over_under(tuple(team_goals[team2]))
     gou = predict_game_over_under(goals)
-    print(team1_ou, team2_ou, gou)
+    return {team1: team1_ou, team2: team2_ou, 'gou': gou}
