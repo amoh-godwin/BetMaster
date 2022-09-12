@@ -1,7 +1,10 @@
 # 11th September, 2022
 # Amoh-Gyebi 
 from collections import Counter
-from typing import Tuple
+from typing import Tuple, List
+
+OVER_ADD = 1.5
+UNDER_MINUS = 0.5
 
 
 def over_under_evaluation(scores: tuple) -> Tuple[bool, bool]:
@@ -67,6 +70,7 @@ def min_max(group_score: tuple, test_score: int) -> tuple:
 
     return (under_rate, over_rate)
 
+
 def most_recent_over_under(scores: tuple) -> tuple:
     # Get the most recent prediction
     # and see it it was True
@@ -78,3 +82,17 @@ def most_recent_over_under(scores: tuple) -> tuple:
     f_min_max = min_max(five, t_five)
     t_min_max = min_max(ten, t_ten)
     return f_min_max, t_min_max
+
+
+def predict_over_under(scores: tuple) -> List[Tuple[float, float]]:
+    l = len(scores)
+    five = set(scores[l-5:])
+    ten = set(scores[l-10:])
+
+    maxx = max(five) + OVER_ADD
+    minn = min(five) - UNDER_MINUS
+
+    t_maxx = max(ten) + OVER_ADD
+    t_minn = min(ten) - UNDER_MINUS
+
+    return [(maxx, minn), (t_maxx, t_minn)]
