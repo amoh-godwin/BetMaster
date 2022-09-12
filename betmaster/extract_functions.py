@@ -10,6 +10,17 @@ from typing import List, Tuple
 
 
 @dataclass
+class Match:
+    id: int
+    date: int
+    name: str
+    team1: str
+    team2: str
+    score1: int
+    score2: int
+
+
+@dataclass
 class Team:
     id: int
     name: str
@@ -21,6 +32,7 @@ class Scores:
     name: int
     gf: tuple
     ga: tuple
+
 
 
 def extract_footlive_tomorrow() -> List:
@@ -41,6 +53,28 @@ def extract_footlive_tomorrow() -> List:
         teams.extend(extract_team_data(x))
 
     print(teams)
+
+
+def extract_goals(div: str, team_name: str) -> Tuple:
+    br = div.replace('\\', '')
+    id = re.findall(r"id=['|\"].*?['|\"]", br)[0][4:-1]
+    s1 = re.findall(r"score1=['|\"].*?['|\"]", br)[0][8:-1]
+    s2 = re.findall(r"score2=['|\"].*?['|\"]", br)[0][8:-1]
+    t1 = re.findall(r"slug1=['|\"].*?['|\"]", br)[0][7:-1]
+    t2 = re.findall(r"slug2=['|\"].*?['|\"]", br)[0][7:-1]
+    
+    if team_name == t1:
+        gf = s1
+        ga = s2
+    else:
+        gf = s2
+        ga = s1
+
+    return (int(gf), int(ga))
+
+
+def extract_matches(div: str) -> Match:
+    pass
 
 
 def extract_team_data(div: str) -> List:
@@ -77,21 +111,4 @@ def extract_team_scores(name: str) -> Scores:
 
     return Scores(name, tuple(sgf), tuple(sga))
 
-
-def extract_goals(div: str, team_name: str) -> Tuple:
-    br = div.replace('\\', '')
-    id = re.findall(r"id=['|\"].*?['|\"]", br)[0][4:-1]
-    s1 = re.findall(r"score1=['|\"].*?['|\"]", br)[0][8:-1]
-    s2 = re.findall(r"score2=['|\"].*?['|\"]", br)[0][8:-1]
-    t1 = re.findall(r"slug1=['|\"].*?['|\"]", br)[0][7:-1]
-    t2 = re.findall(r"slug2=['|\"].*?['|\"]", br)[0][7:-1]
-    
-    if team_name == t1:
-        gf = s1
-        ga = s2
-    else:
-        gf = s2
-        ga = s1
-
-    return (int(gf), int(ga))
 
