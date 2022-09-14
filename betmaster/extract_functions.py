@@ -36,6 +36,12 @@ class H2HVictory:
     home: list
     away: list
 
+@dataclass
+class TeamVictory:
+    name: str
+    home: list
+    away: list
+
 
 @dataclass
 class Team:
@@ -182,6 +188,39 @@ def extract_homeaway_goals(
             team1_vict.away.append('D')
             team2_vict.home.append('D')
 
+
+def extract_team_victory(name: str) -> Dict:
+    """
+    Return the Win, Draw or Loss as W, D or L
+    """
+
+    team_victory = TeamVictory(name, [], [])
+
+    games = get_store_team_games(name)
+
+    for score in games:
+        if name == score['team1']:
+
+            if score['score1'] > score['score2']:
+                victory = 'W'
+            elif score['score1'] < score['score2']:
+                victory = 'L'
+            else:
+                victory = 'D'
+
+            team_victory.home.append(victory)
+
+        elif name == score['team2']:
+            if score['score1'] > score['score2']:
+                victory = 'L'
+            elif score['score1'] < score['score2']:
+                victory = 'W'
+            else:
+                victory = 'D'
+
+            team_victory.away.append(victory)
+    
+    return team_victory
 
 
 def extract_team_data(div: str) -> List:
