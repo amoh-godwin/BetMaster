@@ -22,9 +22,14 @@ def over_under_summary(scores) -> Dict:
 
 
 def h2h_summary(team1: str, team2: str) -> Dict:
-    goals, team_goals = extract_h2h(team1, team2)
+    goals, team_goals, home, away = extract_h2h(team1, team2)
     # mou = match_over_under_evaluation(goals)
     team1_ou = predict_over_under(tuple(team_goals[team1]))
     team2_ou = predict_over_under(tuple(team_goals[team2]))
+    team1_h2h_gf =  predict_over_under(tuple(home.home_gf))
+    team1_h2h_ga =  predict_over_under(tuple(home.home_ga))
+    team2_h2h_gf =  predict_over_under(tuple(away.away_gf))
+    team2_h2h_ga =  predict_over_under(tuple(away.away_ga))
     gou = predict_game_over_under(goals)
-    return {team1: team1_ou, team2: team2_ou, 'gou': gou}
+    # return {team1: team1_ou, team2: team2_ou, 'gou': gou}
+    return (team1_h2h_gf, team1_h2h_ga, team2_h2h_gf, team2_h2h_ga, gou)
