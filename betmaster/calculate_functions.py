@@ -2,10 +2,32 @@
 # Amoh-Gyebi 
 from cgi import test
 from collections import Counter
-from typing import Tuple, List
+from typing import Tuple, List, Dict
+from unittest import result
 
 OVER_ADD = 1.5
 UNDER_MINUS = 0.5
+
+
+def home_away_evaluation(scores: Dict) -> Dict[Dict]:
+    results = {}
+    home = tuple(scores.home)
+    away = tuple(scores.away)
+    hw = home.count('W')
+    hd = home.count('D')
+    hl = home.count('L')
+    aw = away.count('W')
+    ad = away.count('D')
+    al = away.count('L')
+    hwp = (hw / len(home)) * 100
+    hdp = (hd / len(home)) * 100
+    hlp = (hl / len(home)) * 100
+    awp = (aw / len(away)) * 100
+    adp = (ad / len(away)) * 100
+    alp = (al / len(away)) * 100
+    results['home'] = {'W': hwp, 'D': hdp, 'L': hlp}
+    results['away'] = {'W': awp, 'D': adp, 'L': alp}
+    return results
 
 
 def match_over_under_evaluation(scores: tuple) -> Tuple[bool, bool]:
