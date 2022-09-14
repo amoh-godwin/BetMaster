@@ -36,6 +36,19 @@ def home_away_evaluation(scores: Dict) -> Dict:
     results['away'] = {'W': awp, 'D': adp, 'L': alp}
     return results
 
+def range_matches_evaluation(scores: Dict, length: int = 0) -> Dict:
+    if length == 0:
+        length = len(scores.victories)
+
+    ha = scores.victories[0:length]
+
+    total = len(ha)
+
+    w = round((ha.count('W') / total) * 100)
+    d = round((ha.count('D') / total) * 100)
+    l = round((ha.count('L') / total) * 100)
+
+    return {'W': w, 'D': d, 'L': l}
 
 def match_over_under_evaluation(scores: tuple) -> Tuple[bool, bool]:
     # check the score in groups of 2
