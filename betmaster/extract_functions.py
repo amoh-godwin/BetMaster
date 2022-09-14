@@ -31,6 +31,13 @@ class HomeAwayScore:
 
 
 @dataclass
+class H2HVictory:
+    name: str
+    home: list
+    away: list
+
+
+@dataclass
 class Team:
     id: int
     name: str
@@ -102,6 +109,8 @@ def extract_h2h(team1: str, team2: str, low_year: int = 2020) -> Tuple[List, Dic
     t2_ids = set()
     home_games = HomeAwayScore(team1, [], [], [], [])
     away_games = HomeAwayScore(team2, [], [], [], [])
+    team1_h2h_victory = H2HVictory(team1, [], [])
+    team2_h2h_victory = H2HVictory(team2, [], [])
     h2h_ids = set()
     games = []
     team_goals = {team1: set(), team2: set() }
@@ -115,7 +124,7 @@ def extract_h2h(team1: str, team2: str, low_year: int = 2020) -> Tuple[List, Dic
             year = int(datetime.fromtimestamp(x['date']).year)
             if x['id'] not in h2h_ids and x['date'] < today and year > low_year:
                 h2h_ids.add(x['id'])
-                extract_homeaway_goals(x, team1, home_games, away_games)
+                extract_homeaway_goals(x, team1, home_games, away_games, team1_h2h_victory, team2_h2h_victory)
                 team_goals[x['team1']].add(x['score1'])
                 team_goals[x['team2']].add(x['score2'])
                 games.append((x['score1'], x['score2']))
@@ -126,26 +135,53 @@ def extract_h2h(team1: str, team2: str, low_year: int = 2020) -> Tuple[List, Dic
             year = int(datetime.fromtimestamp(x['date']).year)
             if x['id'] not in h2h_ids and x['date'] < today and year > low_year:
                 h2h_ids.add(x['id'])
-                extract_homeaway_goals(x, team1, home_games, away_games)
+                extract_homeaway_goals(x, team1, home_games, away_games, team1_h2h_victory, team2_h2h_victory)
                 team_goals[x['team1']].add(x['score1'])
                 team_goals[x['team2']].add(x['score2'])
                 games.append((x['score1'], x['score2']))
 
-    return (games, team_goals, home_games, away_games)
+    return (games, team_goals, home_games, away_games, (team1_h2h_victory, team2_h2h_victory))
 
 
-def extract_homeaway_goals(x: Dict, team1: str, home_games: Dict, away_games: Dict):
+def extract_homeaway_goals(
+    x: Dict, team1: str,
+    home_games: Dict, away_games: Dict,
+    team1_vict: Dict, team2_vict: Dict):
     # Home / Away extraction
     if team1 == x['team1']:
         home_games.home_gf.append(x['score1'])
         away_games.away_ga.append(x['score1'])
         home_games.home_ga.append(x['score2'])
         away_games.away_gf.append(x['score2'])
+
+        # Victory extraction
+        if x['score1'] > x['score2']:
+            team1_vict.home.append('W')
+            team2_vict.away.append('L')
+        elif x['score1'] < x['score2']:
+            team1_vict.home.append('L')
+            team2_vict.away.append('W')
+        else:
+            team1_vict.home.append('D')
+            team2_vict.away.append('D')
+
     elif team1 == x['team2']:
         home_games.away_gf.append(x['score2'])
         away_games.home_ga.append(x['score2'])
         home_games.away_ga.append(x['score1'])
         away_games.home_gf.append(x['score1'])
+
+        # Victory extraction
+        if x['score1'] > x['score2']:
+            team1_vict.away.append('W')
+            team2_vict.home.append('L')
+        elif x['score1'] < x['score2']:
+            team1_vict.away.append('L')
+            team2_vict.home.append('W')
+        else:
+            team1_vict.away.append('D')
+            team2_vict.home.append('D')
+
 
 
 def extract_team_data(div: str) -> List:
