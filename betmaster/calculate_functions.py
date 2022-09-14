@@ -9,7 +9,7 @@ OVER_ADD = 1.5
 UNDER_MINUS = 0.5
 
 
-def home_away_evaluation(scores: Dict) -> Dict[Dict]:
+def home_away_evaluation(scores: Dict) -> Dict:
     results = {}
     home = tuple(scores.home)
     away = tuple(scores.away)
@@ -19,12 +19,19 @@ def home_away_evaluation(scores: Dict) -> Dict[Dict]:
     aw = away.count('W')
     ad = away.count('D')
     al = away.count('L')
-    hwp = (hw / len(home)) * 100
-    hdp = (hd / len(home)) * 100
-    hlp = (hl / len(home)) * 100
-    awp = (aw / len(away)) * 100
-    adp = (ad / len(away)) * 100
-    alp = (al / len(away)) * 100
+    if home:
+        hwp = int((hw / len(home)) * 100)
+        hdp = int((hd / len(home)) * 100)
+        hlp = int((hl / len(home)) * 100)
+    else:
+        hwp, hdp, hlp = (None, None, None)
+    if away:
+        awp = int((aw / len(away)) * 100)
+        adp = int((ad / len(away)) * 100)
+        alp = int((al / len(away)) * 100)
+    else:
+        awp, adp, alp = (None, None, None)
+
     results['home'] = {'W': hwp, 'D': hdp, 'L': hlp}
     results['away'] = {'W': awp, 'D': adp, 'L': alp}
     return results
