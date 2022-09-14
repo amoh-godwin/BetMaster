@@ -109,7 +109,6 @@ def extract_h2h(team1: str, team2: str, low_year: int = 2020) -> Tuple[List, Dic
     today = int(datetime.now().timestamp())
 
     for x in t1_games:
-        print(f'{x=}')
         # if x['id'] in inter:
         if x['team1'] in team_names and x['team2'] in team_names:
             
