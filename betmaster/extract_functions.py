@@ -100,7 +100,8 @@ def extract_h2h(team1: str, team2: str, low_year: int = 2020) -> Tuple[List, Dic
     t2_games = get_store_team_games(team2)
     t1_ids = set()
     t2_ids = set()
-    ha_games = HomeAwayScore(team1, [], [], [], [])
+    home_games = HomeAwayScore(team1, [], [], [], [])
+    away_games = HomeAwayScore(team2, [], [], [], [])
     h2h_ids = set()
     games = []
     team_goals = {team1: set(), team2: set() }
@@ -115,7 +116,7 @@ def extract_h2h(team1: str, team2: str, low_year: int = 2020) -> Tuple[List, Dic
             year = int(datetime.fromtimestamp(x['date']).year)
             if x['id'] not in h2h_ids and x['date'] < today and year > low_year:
                 h2h_ids.add(x['id'])
-                extract_homeaway_goals(x, team1, ha_games)
+                extract_homeaway_goals(x, team1, home_games, away_games)
                 team_goals[x['team1']].add(x['score1'])
                 team_goals[x['team2']].add(x['score2'])
                 games.append((x['score1'], x['score2']))
@@ -126,26 +127,26 @@ def extract_h2h(team1: str, team2: str, low_year: int = 2020) -> Tuple[List, Dic
             year = int(datetime.fromtimestamp(x['date']).year)
             if x['id'] not in h2h_ids and x['date'] < today and year > low_year:
                 h2h_ids.add(x['id'])
-                extract_homeaway_goals(x, team1, ha_games)
+                extract_homeaway_goals(x, team1, home_games, away_games)
                 team_goals[x['team1']].add(x['score1'])
                 team_goals[x['team2']].add(x['score2'])
                 games.append((x['score1'], x['score2']))
 
-    print(f'{h2h_ids=}')
-    print(ha_games)
-
-    return (games, team_goals)
+    return (games, team_goals, home_games, away_games)
 
 
-def extract_homeaway_goals(x: Dict, team1: str, games_dict: Dict):
+def extract_homeaway_goals(x: Dict, team1: str, home_games: Dict, away_games: Dict):
     # Home / Away extraction
-    print('hre: ', x)
     if team1 == x['team1']:
-        games_dict.home_gf.append(x['score1'])
-        games_dict.home_ga.append(x['score2'])
+        home_games.home_gf.append(x['score1'])
+        away_games.away_ga.append(x['score1'])
+        home_games.home_ga.append(x['score2'])
+        away_games.away_gf.append(x['score2'])
     elif team1 == x['team2']:
-        games_dict.away_gf.append(x['score2'])
-        games_dict.away_ga.append(x['score1'])
+        home_games.away_gf.append(x['score2'])
+        away_games.home_ga.append(x['score2'])
+        home_games.away_ga.append(x['score1'])
+        away_games.home_gf.append(x['score1'])
 
 
 def extract_team_data(div: str) -> List:
