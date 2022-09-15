@@ -141,7 +141,6 @@ def over_under_evaluation(scores: tuple) -> Tuple[bool, bool]:
     count = Counter(overs)
     count_u = Counter(unders)
 
-    print('overs', overs)
     over_percent = round((count.get(True) / len(overs)) * 100)
     under_percent = round((count_u.get(True) / len(unders)) * 100)
     per = round((over_percent + under_percent) / 2)
@@ -198,8 +197,6 @@ def predict_game_over_under(scores: list):
     else:
         low = -100.5
         high = 100.5
-
-    print('high', scores)
 
     return (high, low)
 
