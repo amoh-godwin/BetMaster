@@ -16,18 +16,20 @@ def main_summary(team1: str, team2: str) -> Dict:
 
     victory_sum = victory_summary(team1_sum, team2_sum, h2h)
 
-    if victory_sum['home'] > 85:
-        summary['1x2'] = 'Home'
-    elif victory_sum['away'] > 85:
-        summary['1x2'] = 'Away'
-    else:
+    if victory_sum['home'] > 59:
+        summary['1x2'] += 'Home'
+    if victory_sum['away'] > 50:
+        summary['1x2'] += 'Away'
+    if victory_sum['draw'] > 50:
+        summary['1x2'] += 'Draw'
+    if not summary['1x2']:
         summary['1x2'] = 'Uncertain'
 
     if 'Predicted GF AVG' in team1_sum and 'Predicted GA AVG' in team2_sum:
         avg = (team1_sum['Predicted GF AVG'] + team2_sum['Predicted GA AVG']) / 2
         over = avg - 0.5
         summary['HomeOver'] = round(over, 2)
-    
+
     if 'Predicted GF AVG' in team2_sum and 'Predicted GA AVG' in team1_sum:
         avg = (team2_sum['Predicted GF AVG'] + team1_sum['Predicted GA AVG']) / 2
         over = avg - 0.5
@@ -35,9 +37,9 @@ def main_summary(team1: str, team2: str) -> Dict:
 
     t1_gf = int((team1_sum['GF'] + team2_sum['GA']) / 2)
     t2_gf = int((team1_sum['GA'] + team2_sum['GF']) / 2)
-    if t1_gf > 65:
+    if t1_gf > 80:
         summary['HomeGoal'] = t1_gf
-    if t2_gf > 65:
+    if t2_gf > 80:
         summary['AwayGoal'] = t2_gf
 
     return summary
@@ -51,7 +53,7 @@ def h2h_summary(team1: str, team2: str) -> Dict:
         'combined_away_1x2')
     summary = {}
     goals, team_goals, home, away, ha_victory = extract_h2h(team1, team2)
-    if goals and team_goals[team1] and (home.home_gf or home.home_ga) and ha_victory.home:
+    if team_goals[team1]:
         # mou = match_over_under_evaluation(goals)
         team1_ou = predict_over_under(tuple(team_goals[team1]))
         team2_ou = predict_over_under(tuple(team_goals[team2]))
@@ -198,7 +200,7 @@ def team_summary(team_name: str, location: str) -> Dict:
 
 
 def victory_summary(team1_summary: Dict, team2_summary: Dict, h2h_summary: Dict) -> Dict:
-    h2h_win_score = {'home': 0, 'away': 0}
+    h2h_win_score = {'home': 0, 'draw': 0, 'away': 0}
     t1_local_1x2 = team1_summary['local_1x2']
     t1_combined_1x2 = team1_summary['combined_1x2']
     t2_local_1x2 = team2_summary['local_1x2']
@@ -218,7 +220,29 @@ def victory_summary(team1_summary: Dict, team2_summary: Dict, h2h_summary: Dict)
             h2h_win_score['home'] += 20
         if away_1x2 == 'W':
             h2h_win_score['away'] += 20
-    
+
+        if combined_home_1x2 == 'D':
+            h2h_win_score['draw'] += 15
+        if combined_away_1x2 == 'D':
+            h2h_win_score['draw'] += 15
+        if home_1x2 == 'D':
+            h2h_win_score['draw'] += 10
+        if away_1x2 == 'D':
+            h2h_win_score['draw'] += 10
+        
+        if combined_home_1x2 in ('WD', 'DW'):
+            h2h_win_score['home'] += 15
+            h2h_win_score['draw'] += 15
+        if combined_away_1x2 in ('WD', 'DW'):
+            h2h_win_score['away'] += 15
+            h2h_win_score['draw'] += 15
+        if home_1x2 in ('WD', 'DW'):
+            h2h_win_score['home'] += 10
+            h2h_win_score['draw'] += 10
+        if away_1x2 in ('WD', 'DW'):
+            h2h_win_score['away'] += 10
+            h2h_win_score['draw'] += 10
+
     if t1_local_1x2 == 'W':
         h2h_win_score['home'] += 30
     if t2_local_1x2 == 'W':
@@ -227,6 +251,28 @@ def victory_summary(team1_summary: Dict, team2_summary: Dict, h2h_summary: Dict)
         h2h_win_score['home'] += 20
     if t2_combined_1x2 == 'W':
         h2h_win_score['away'] += 20
+
+    if t1_local_1x2 == 'D':
+        h2h_win_score['draw'] += 15
+    if t2_local_1x2 == 'D':
+        h2h_win_score['draw'] += 15
+    if t1_combined_1x2 == 'D':
+        h2h_win_score['draw'] += 10
+    if t2_combined_1x2 == 'D':
+        h2h_win_score['draw'] += 10
+
+    if t1_local_1x2 in ('WD', 'DW'):
+        h2h_win_score['home'] += 15
+        h2h_win_score['draw'] += 15
+    if t2_local_1x2 in ('WD', 'DW'):
+        h2h_win_score['away'] += 15
+        h2h_win_score['draw'] += 15
+    if t1_combined_1x2 in ('WD', 'DW'):
+        h2h_win_score['home'] += 10
+        h2h_win_score['draw'] += 10
+    if t2_combined_1x2 in ('WD', 'DW'):
+        h2h_win_score['away'] += 10
+        h2h_win_score['draw'] += 10
 
     return h2h_win_score
 
