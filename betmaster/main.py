@@ -1,12 +1,27 @@
 # 11th September, 2022
 # Amoh-Gyebi Ampofo
 
+from ast import main
 from summary_functions import main_summary
 
 # home = 'olympiakos'
 # away = 'freiburg'
 # home = 'trabzonspor'
 # away = 'crvena-zvezd'
+""" matches = [
+    ('as-monaco', 'ferencvaros'), ('olympiakos', 'freiburg'), ('ps-tni', 'pss-sleman'),
+    ('trabzonspor', 'crvena-zvezd'), ('qarabag-agdam', 'fc-nantes'),
+    ('fc-midtjylland', 'lazio'), ('feyenoord', 'sturm-graz'),
+    ('real-sociedad', 'omonia-nicosia'), ('sheriff-tiraspol', 'manchester-united'),
+    ('sporting-braga', 'union-berlin'), ('union-saint-gilloise', 'malmo-ff'),
+    ('as-roma', 'hjk-helsinki'), ('real-betis', 'ludogorets-razgrad'),
+    ('bodo-glimt', 'fc-zurich'), ('dynamo-kiev', 'aek-larnaca'),
+    ('stade-rennais', 'fenerbahce'), ('sandecja-nowy-sacz', 'stal-rzeszow'),
+    ('aris-limassol', 'karmiotissa-pano-polemidia'), ('gandzasar-ii', 'mika-fc'),
+    ('usk-anif', 'st-polten-spratzern'), ('hamburger-sv-ii', 'vfb-lubeck'),
+    ('hapoel-afula', 'bnei-yehuda'), ('hapoel-petah-tikva', 'agudat-sport-ashdod')] """
+
+
 matches = [
     ('as-monaco', 'ferencvaros'), ('olympiakos', 'freiburg'),
     ('trabzonspor', 'crvena-zvezd'), ('qarabag-agdam', 'fc-nantes'),
@@ -42,6 +57,7 @@ matches = [
     ('zalgiris-vilnius', 'fc-basel'), ('cfr-cluj', 'sivasspor'),
     ('slavia-prague', 'ballkani'), ('djurgardens-if', 'molde-fk'),
     ('kaa-gent', 'shamrock-rovers'), ('az-alkmaar', 'fc-vaduz')]
+
 
 for x in matches:
     try:
