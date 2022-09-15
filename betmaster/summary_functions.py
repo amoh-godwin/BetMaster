@@ -13,7 +13,6 @@ def main_summary(team1: str, team2: str) -> Dict:
     team1_sum = team_summary(team1, 'home')
     team2_sum = team_summary(team2, 'away')
     h2h = h2h_summary(team1, team2)
-    print(h2h)
 
     victory_sum = victory_summary(team1_sum, team2_sum, h2h)
 
@@ -204,19 +203,21 @@ def victory_summary(team1_summary: Dict, team2_summary: Dict, h2h_summary: Dict)
     t1_combined_1x2 = team1_summary['combined_1x2']
     t2_local_1x2 = team2_summary['local_1x2']
     t2_combined_1x2 = team2_summary['combined_1x2']
-    home_1x2 = h2h_summary['local_home_1x2']
-    combined_home_1x2 = h2h_summary['combined_home_1x2']
-    away_1x2 = h2h_summary['local_away_1x2']
-    combined_away_1x2 = h2h_summary['combined_away_1x2']
 
-    if combined_home_1x2 == 'W':
-        h2h_win_score['home'] += 30
-    if combined_away_1x2 == 'W':
-        h2h_win_score['away'] += 30
-    if home_1x2 == 'W':
-        h2h_win_score['home'] += 20
-    if away_1x2 == 'W':
-        h2h_win_score['away'] += 20
+    if h2h_summary:
+        home_1x2 = h2h_summary['local_home_1x2']
+        combined_home_1x2 = h2h_summary['combined_home_1x2']
+        away_1x2 = h2h_summary['local_away_1x2']
+        combined_away_1x2 = h2h_summary['combined_away_1x2']
+
+        if combined_home_1x2 == 'W':
+            h2h_win_score['home'] += 30
+        if combined_away_1x2 == 'W':
+            h2h_win_score['away'] += 30
+        if home_1x2 == 'W':
+            h2h_win_score['home'] += 20
+        if away_1x2 == 'W':
+            h2h_win_score['away'] += 20
     
     if t1_local_1x2 == 'W':
         h2h_win_score['home'] += 30
@@ -226,6 +227,6 @@ def victory_summary(team1_summary: Dict, team2_summary: Dict, h2h_summary: Dict)
         h2h_win_score['home'] += 20
     if t2_combined_1x2 == 'W':
         h2h_win_score['away'] += 20
-    
+
     return h2h_win_score
 
