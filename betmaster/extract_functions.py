@@ -130,7 +130,6 @@ def extract_h2h(team1: str, team2: str, low_year: int = 2020) -> Tuple[List, Dic
     for x in t1_games:
         # if x['id'] in inter:
         if x['team1'] in team_names and x['team2'] in team_names:
-            
             year = int(datetime.fromtimestamp(x['date']).year)
             if x['id'] not in h2h_ids and x['date'] < today and year > low_year:
                 h2h_ids.add(x['id'])
@@ -141,7 +140,6 @@ def extract_h2h(team1: str, team2: str, low_year: int = 2020) -> Tuple[List, Dic
 
     for x in t2_games:
         if x['team1'] in team_names and x['team2'] in team_names:
-            
             year = int(datetime.fromtimestamp(x['date']).year)
             if x['id'] not in h2h_ids and x['date'] < today and year > low_year:
                 h2h_ids.add(x['id'])
