@@ -141,9 +141,9 @@ def over_under_evaluation(scores: tuple) -> Tuple[bool, bool]:
     count = Counter(overs)
     count_u = Counter(unders)
 
-    over_percent = (count.get(True) / len(overs)) * 100
-    under_percent = (count_u.get(True) / len(unders)) * 100
-    per = (over_percent + under_percent) / 2
+    over_percent = round((count.get(True) / len(overs)) * 100)
+    under_percent = round((count_u.get(True) / len(unders)) * 100)
+    per = round((over_percent + under_percent) / 2)
 
     return (per)
 
@@ -194,18 +194,31 @@ def predict_game_over_under(scores: list):
     low = min(pred)
     high = max(pred)
 
-    return (low, high)
+    return (high, low)
 
 
 def predict_over_under(scores: tuple) -> List[Tuple[float, float]]:
     l = len(scores)
-    five = set(scores[l-5:])
-    ten = set(scores[l-10:])
+    five = scores[l-5:]
+    ten = scores[l-10:]
 
-    maxx = max(five) + OVER_ADD
-    minn = min(five) - UNDER_MINUS
+    if l > 4:
+        maxx = max(five) + OVER_ADD
+        minn = min(five) - UNDER_MINUS
+        avgg = sum(five) / 5
+    else:
+        maxx, minn, avgg = None, None, None
 
-    t_maxx = max(ten) + OVER_ADD
-    t_minn = min(ten) - UNDER_MINUS
+    if l > 9:
+        t_maxx = max(ten) + OVER_ADD
+        t_minn = min(ten) - UNDER_MINUS
+        t_avgg = sum(ten) / 10
+    else:
+        t_maxx, t_minn, t_avgg = None, None, None
 
-    return [(maxx, minn), (t_maxx, t_minn)]
+    return [(maxx, minn, avgg), (t_maxx, t_minn, t_avgg)]
+
+
+def final_predict_over_under(five_avg: int, ten_avg: int) -> int:
+    # find the average of the average
+    return abs((five_avg + ten_avg) / 2)
