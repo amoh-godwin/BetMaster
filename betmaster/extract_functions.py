@@ -123,7 +123,7 @@ def extract_h2h(team1: str, team2: str, low_year: int = 2020) -> Tuple[List, Dic
     team2_h2h_victory = H2HVictory(team2, [], [])
     h2h_ids = set()
     games = []
-    team_goals = {team1: set(), team2: set() }
+    team_goals = {team1: [], team2: [] }
 
     today = int(datetime.now().timestamp())
 
@@ -135,8 +135,8 @@ def extract_h2h(team1: str, team2: str, low_year: int = 2020) -> Tuple[List, Dic
             if x['id'] not in h2h_ids and x['date'] < today and year > low_year:
                 h2h_ids.add(x['id'])
                 extract_homeaway_goals(x, team1, home_games, away_games, team1_h2h_victory, team2_h2h_victory)
-                team_goals[x['team1']].add(x['score1'])
-                team_goals[x['team2']].add(x['score2'])
+                team_goals[x['team1']].append(x['score1'])
+                team_goals[x['team2']].append(x['score2'])
                 games.append((x['score1'], x['score2']))
 
     for x in t2_games:
@@ -146,8 +146,8 @@ def extract_h2h(team1: str, team2: str, low_year: int = 2020) -> Tuple[List, Dic
             if x['id'] not in h2h_ids and x['date'] < today and year > low_year:
                 h2h_ids.add(x['id'])
                 extract_homeaway_goals(x, team1, home_games, away_games, team1_h2h_victory, team2_h2h_victory)
-                team_goals[x['team1']].add(x['score1'])
-                team_goals[x['team2']].add(x['score2'])
+                team_goals[x['team1']].append(x['score1'])
+                team_goals[x['team2']].append(x['score2'])
                 games.append((x['score1'], x['score2']))
 
     return (games, team_goals, home_games, away_games, (team1_h2h_victory, team2_h2h_victory))
