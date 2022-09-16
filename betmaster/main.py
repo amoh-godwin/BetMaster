@@ -22,7 +22,7 @@ from summary_functions import main_summary
     ('hapoel-afula', 'bnei-yehuda'), ('hapoel-petah-tikva', 'agudat-sport-ashdod')] """
 
 
-matches = [
+""" matches = [
     ('as-monaco', 'ferencvaros'), ('olympiakos', 'freiburg'),
     ('trabzonspor', 'crvena-zvezd'), ('qarabag-agdam', 'fc-nantes'),
     ('fc-midtjylland', 'lazio'), ('feyenoord', 'sturm-graz'),
@@ -56,8 +56,15 @@ matches = [
     ('mps-atletico-malmi', 'hifk-ii'), ('pyunik', 'slovan-bratislava'),
     ('zalgiris-vilnius', 'fc-basel'), ('cfr-cluj', 'sivasspor'),
     ('slavia-prague', 'ballkani'), ('djurgardens-if', 'molde-fk'),
-    ('kaa-gent', 'shamrock-rovers'), ('az-alkmaar', 'fc-vaduz')]
+    ('kaa-gent', 'shamrock-rovers'), ('az-alkmaar', 'fc-vaduz')] """
 
+matches = [
+    ('cd-olimpia', 'diriangen-fc'),
+    ('fk-rostov-u19', 'fc-chertanovo-moscow-u20'),
+    ('beijing-bsu', 'nantong-zhiyun-fc'),
+    ('shenyang-urban-fc', 'chongqing-lifan'),
+    ('persib-bandung', 'barito-putera'),
+    ('correcaminos-uat', 'dorados-de-sinaloa')]
 
 for x in matches:
     try:
