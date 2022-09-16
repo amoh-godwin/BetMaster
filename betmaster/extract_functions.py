@@ -1,5 +1,6 @@
 # 11th September, 2022
 # Amoh-Gyebi Ampofo
+from webbrowser import get
 import requests
 import re
 from datetime import datetime
@@ -7,7 +8,7 @@ from dataclasses import asdict, dataclass
 from typing import List, Tuple, Dict
 
 from storage_functions import temp_store_games, get_store_team_games
-from internet_functions import get_team_data
+from internet_functions import get_team_data, get_not_started
 
 
 @dataclass
@@ -73,24 +74,20 @@ def extract_data(div: str) -> Tuple[int, int, int, int, str, str]:
     return (int(id), int(date), int(s1), int(s2), t1, t2)
 
 
-def extract_footlive_tomorrow() -> List:
+def extract_not_started() -> List:
     teams = []
-    req = requests.get('http://www.footlive.com/tomorrow/')
-    conts = req.text
 
-    with open('ff.txt', 'wb') as fb:
-        fb.write(req.content)
-
-    """ with open('ff.txt', 'r') as fr:
-        conts = fr.read() """
+    conts = get_not_started()
 
     reg = r"data-id=['|\"].*?['|\"] data-date=['|\"].*?['|\"] "
     reg += r"data-slug1=['|\"].*?['|\"] data-slug2=['|\"].*?['|\"]"
     all = re.findall(reg, conts)
-    for x in all:
-        teams.extend(extract_team_data(x))
 
-    print(teams)
+    for x in all:
+        if "data-status='-'" in x:
+            teams.extend(extract_team_data(x))
+
+    # print(teams)
 
 
 def extract_goals(div: str, team_name: str) -> Tuple:

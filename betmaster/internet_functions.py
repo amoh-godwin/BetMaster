@@ -3,6 +3,7 @@
 
 import requests
 import os
+from datetime import date
 
 
 def get_team_data(team_name: str) -> str:
@@ -17,5 +18,23 @@ def get_team_data(team_name: str) -> str:
 
         with open(fn, 'wb') as fb:
             fb.write(req.content)
+
+    return conts
+
+
+def get_not_started() -> str:
+
+    today = date.today()
+    fileName = 'not_started_' + str(today) + '.txt'
+
+    if os.path.exists(fileName):
+        with open(fileName, 'r') as fp:
+            conts = fp.read()
+    else:
+        req = requests.get('http://www.footlive.com/')
+        conts = req.text
+
+        with open(fileName, 'w') as fp:
+            fp.write(conts)
 
     return conts
