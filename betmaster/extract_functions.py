@@ -51,7 +51,8 @@ class TeamCombinedVictory:
 @dataclass
 class Team:
     id: int
-    name: str
+    home: str
+    away: str
     date: int
 
 
@@ -87,7 +88,7 @@ def extract_not_started() -> List:
         if "data-status='-'" in x:
             teams.extend(extract_team_data(x))
 
-    # print(teams)
+    return teams
 
 
 def extract_goals(div: str, team_name: str) -> Tuple:
@@ -258,7 +259,7 @@ def extract_team_victory(name: str) -> Dict:
 
 def extract_team_data(div: str) -> List:
     id, date, s1, s2, t1, t2 = extract_data(div)
-    teams = [Team(int(id), t1, int(date)), Team(int(id), t2, int(date))]
+    teams = [Team(int(id), t1, t2, int(date))]
     return teams
 
 
