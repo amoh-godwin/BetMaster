@@ -96,21 +96,23 @@ def over_under_evaluation(scores: tuple) -> Tuple[bool, bool]:
     # to see if the predictions were accurate
     # Most recent scores fewer than 5 and 10
     # are not included in evaluation
-    five = set()
-    ten = set()
-    rating = []
+    five = []
+    ten = []
     under_rate = False # max
     unders = []
+    ten_unders = []
     under_percent = 0
     over_rate = False # min
     overs = []
+    ten_overs = []
     over_percent = 0
     counter = 0
     ten_counter = 0
     overall_index = 0
+
     for x in scores:
-        five.add(x)
-        ten.add(x)
+        five.append(x)
+        ten.append(x)
         counter += 1
         ten_counter += 1
         if counter == 5:
@@ -121,8 +123,7 @@ def over_under_evaluation(scores: tuple) -> Tuple[bool, bool]:
             under_rate, over_rate = min_max(five, test_score)
             unders.append(under_rate)
             overs.append(over_rate)
-            # rating.append((under_rate, over_rate))
-            five = set()
+            five = []
 
             counter = 0
 
@@ -133,19 +134,21 @@ def over_under_evaluation(scores: tuple) -> Tuple[bool, bool]:
                 test_score = -1
             under_rate, over_rate = min_max(ten, test_score)
             ten_counter = 0
-            rating.append((under_rate, over_rate))
-            ten = set()
+            ten_overs.append(over_rate)
+            ten_unders.append(under_rate)
+            ten = []
 
         overall_index += 1
-    
-    count = Counter(overs)
-    count_u = Counter(unders)
 
-    over_percent = round((count.get(True) / len(overs)) * 100)
-    under_percent = round((count_u.get(True) / len(unders)) * 100)
+    over_percent = round((overs.count(True) / len(overs)) * 100)
+    under_percent = round((unders.count(True) / len(unders)) * 100)
     per = round((over_percent + under_percent) / 2)
 
-    return (per)
+    ten_o_per = round((ten_overs.count(True) / len(ten_overs)) * 100)
+    ten_u_per = round((ten_unders.count(True) / len(ten_unders)) * 100)
+    ten_per = round((ten_o_per + ten_u_per) / 2)
+
+    return round((per + ten_per) / 2)
 
 
 def min_max(group_score: tuple, test_score: int) -> Tuple[bool, bool]:
