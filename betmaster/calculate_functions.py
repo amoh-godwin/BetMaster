@@ -24,13 +24,13 @@ def home_away_evaluation(scores: Dict) -> Dict:
         hdp = int((hd / len(home)) * 100)
         hlp = int((hl / len(home)) * 100)
     else:
-        hwp, hdp, hlp = (None, None, None)
+        hwp, hdp, hlp = (0, 0, 0)
     if away:
         awp = int((aw / len(away)) * 100)
         adp = int((ad / len(away)) * 100)
         alp = int((al / len(away)) * 100)
     else:
-        awp, adp, alp = (None, None, None)
+        awp, adp, alp = (0, 0, 0)
 
     results['home'] = {'W': hwp, 'D': hdp, 'L': hlp}
     results['away'] = {'W': awp, 'D': adp, 'L': alp}
@@ -43,10 +43,12 @@ def range_matches_evaluation(scores: Dict, length: int = 0) -> Dict:
     ha = scores.victories[0:length]
 
     total = len(ha)
-
-    w = round((ha.count('W') / total) * 100)
-    d = round((ha.count('D') / total) * 100)
-    l = round((ha.count('L') / total) * 100)
+    if total: # for  now
+        w = round((ha.count('W') / total) * 100)
+        d = round((ha.count('D') / total) * 100)
+        l = round((ha.count('L') / total) * 100)
+    else:
+        w, d, l = (0, 0, 0)
 
     return {'W': w, 'D': d, 'L': l}
 
@@ -140,13 +142,19 @@ def over_under_evaluation(scores: tuple) -> Tuple[bool, bool]:
 
         overall_index += 1
 
-    over_percent = round((overs.count(True) / len(overs)) * 100)
-    under_percent = round((unders.count(True) / len(unders)) * 100)
-    per = round((over_percent + under_percent) / 2)
+    if not overs or not unders:
+        per = 0
+    else:
+        over_percent = round((overs.count(True) / len(overs)) * 100)
+        under_percent = round((unders.count(True) / len(unders)) * 100)
+        per = round((over_percent + under_percent) / 2)
 
-    ten_o_per = round((ten_overs.count(True) / len(ten_overs)) * 100)
-    ten_u_per = round((ten_unders.count(True) / len(ten_unders)) * 100)
-    ten_per = round((ten_o_per + ten_u_per) / 2)
+    if not ten_overs or not ten_unders:
+        ten_per = 0
+    else:
+        ten_o_per = round((ten_overs.count(True) / len(ten_overs)) * 100)
+        ten_u_per = round((ten_unders.count(True) / len(ten_unders)) * 100)
+        ten_per = round((ten_o_per + ten_u_per) / 2)
 
     return round((per + ten_per) / 2)
 
@@ -156,7 +164,7 @@ def min_max(group_score: tuple, test_score: int) -> Tuple[bool, bool]:
     # and see which of the prediction was True
 
     if test_score < 0:
-        return (None, None)
+        return (False, False)
 
     maxx = max(group_score) + OVER_ADD
     minn = min(group_score) - UNDER_MINUS
@@ -173,10 +181,16 @@ def most_recent_over_under(scores: tuple) -> Tuple:
     # Get the most recent prediction
     # and see it it was True
     l = len(scores)
-    five = set(scores[l-5:])
-    ten = set(scores[l-10:])
-    t_five = scores[l-6]
-    t_ten = scores[l-11]
+    five = tuple(scores[l-5:])
+    ten = tuple(scores[l-10:])
+    try:
+        t_five = scores[l-6]
+    except:
+        t_five = -1
+    try:
+        t_ten = scores[l-11]
+    except:
+        t_ten = -1
     f_min_max = min_max(five, t_five)
     t_min_max = min_max(ten, t_ten)
     f_per = (f_min_max.count(True) / len(f_min_max)) * 100
@@ -206,26 +220,36 @@ def predict_game_over_under(scores: list):
 
 def predict_over_under(scores: tuple) -> List[Tuple[float, float]]:
     l = len(scores)
+    three = scores[l-3:]
     five = scores[l-5:]
     ten = scores[l-10:]
+
+    if l > 2:
+        tri_max = max(three) + OVER_ADD
+        tri_min = min(three) - UNDER_MINUS
+        tri_avgg = sum(three) / 3
+    else:
+        tri_max, tri_min, tri_avgg = 0, 0, 0
 
     if l > 4:
         maxx = max(five) + OVER_ADD
         minn = min(five) - UNDER_MINUS
         avgg = sum(five) / 5
     else:
-        maxx, minn, avgg = None, None, None
+        maxx, minn, avgg = 0, 0, 0
 
     if l > 9:
         t_maxx = max(ten) + OVER_ADD
         t_minn = min(ten) - UNDER_MINUS
         t_avgg = sum(ten) / 10
     else:
-        t_maxx, t_minn, t_avgg = None, None, None
+        t_maxx, t_minn, t_avgg = 0, 0, 0
 
-    return [(maxx, minn, avgg), (t_maxx, t_minn, t_avgg)]
+    return [(tri_max, tri_min, tri_avgg), (maxx, minn, avgg), (t_maxx, t_minn, t_avgg)]
 
 
 def final_predict_over_under(five_avg: int, ten_avg: int) -> int:
     # find the average of the average
+    if not five_avg or not ten_avg:
+        return 0
     return abs((five_avg + ten_avg) / 2)
