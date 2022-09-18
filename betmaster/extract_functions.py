@@ -52,7 +52,9 @@ class TeamCombinedVictory:
 class Team:
     id: int
     home: str
+    home_name: str
     away: str
+    away_name: str
     date: int
 
 
@@ -69,10 +71,12 @@ def extract_data(div: str) -> Tuple[int, int, int, int, str, str]:
     date = re.findall(r"date=['|\"].*?['|\"]", br)[0][6:-1]
     s1 = re.findall(r"score1=['|\"].*?['|\"]", br)[0][8:-1]
     s2 = re.findall(r"score2=['|\"].*?['|\"]", br)[0][8:-1]
+    tn1 = re.findall(r"team1=['|\"].*?['|\"]", br)[0][7:-1]
+    tn2 = re.findall(r"team2=['|\"].*?['|\"]", br)[0][7:-1]
     t1 = re.findall(r"slug1=['|\"].*?['|\"]", br)[0][7:-1]
     t2 = re.findall(r"slug2=['|\"].*?['|\"]", br)[0][7:-1]
 
-    return (int(id), int(date), int(s1), int(s2), t1, t2)
+    return (int(id), int(date), int(s1), int(s2), t1, t2, tn1, tn2)
 
 
 def extract_not_started() -> List:
@@ -92,7 +96,7 @@ def extract_not_started() -> List:
 
 
 def extract_goals(div: str, team_name: str) -> Tuple:
-    _, _, s1, s2, t1, t2 = extract_data(div)
+    _, _, s1, s2, t1, t2, _, _ = extract_data(div)
 
     if team_name == t1:
         gf = s1
@@ -105,7 +109,7 @@ def extract_goals(div: str, team_name: str) -> Tuple:
 
 
 def extract_game(div: str, team_name: str) -> Game:
-    id, date, s1, s2, t1, t2 = extract_data(div)
+    id, date, s1, s2, t1, t2, _, _ = extract_data(div)
     return Game(id, date, team_name, t1, t2, s1, s2)
 
 
@@ -258,8 +262,8 @@ def extract_team_victory(name: str) -> Dict:
 
 
 def extract_team_data(div: str) -> List:
-    id, date, s1, s2, t1, t2 = extract_data(div)
-    teams = [Team(int(id), t1, t2, int(date))]
+    id, date, s1, s2, t1, t2, tn1, tn2 = extract_data(div)
+    teams = [Team(int(id), t1, tn1, t2, tn2, int(date))]
     return teams
 
 

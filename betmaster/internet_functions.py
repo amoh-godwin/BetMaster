@@ -5,18 +5,19 @@ import requests
 import os
 from datetime import date
 
+from storage_functions import get_file
+
 
 def get_team_data(team_name: str) -> str:
     fn = team_name + "_goals.txt"
 
-    if os.path.exists(fn):
-        with open(fn, 'r') as fr:
-            conts = fr.read()
-    else:
+    conts = get_file(fn)
+
+    if not conts:
         req = requests.get(f'http://www.footlive.com/team/{team_name}/')
         conts = req.text
 
-        with open(fn, 'wb') as fb:
+        with open("./team_sheets/"+fn, 'wb') as fb:
             fb.write(req.content)
 
     return conts
@@ -24,17 +25,16 @@ def get_team_data(team_name: str) -> str:
 
 def get_not_started() -> str:
 
-    today = date.today()
-    fileName = 'not_started_' + str(today) + '.txt'
+    today = str(date.today())
+    fileName = 'not_started_' + today + '.txt'
+    conts = get_file(fileName)
 
-    if os.path.exists(fileName):
-        with open(fileName, 'r') as fp:
-            conts = fp.read()
-    else:
-        req = requests.get('http://www.footlive.com/')
-        conts = req.text
+    if not conts:
+        req = requests.get(f'http://www.footlive.com/scores-results/{today}/')
+        conts = req.content
 
-        with open(fileName, 'w') as fp:
+        with open("./team_sheets/"+fileName, 'wb') as fp:
             fp.write(conts)
+        conts = str(conts, 'utf-8')
 
     return conts

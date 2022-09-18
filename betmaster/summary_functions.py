@@ -18,6 +18,10 @@ def main_summary(team1: str, team2: str) -> Dict:
 
     victory_sum = victory_summary(team1_sum, team2_sum, h2h)
 
+    # Total games
+    summary['HomeGames'] = team1_sum['Games']
+    summary['AwayGames'] = team2_sum['Games']
+
     if victory_sum['home'] > 59:
         summary['1x2'] += 'Home'
     if victory_sum['away'] > 50:
@@ -191,6 +195,13 @@ def team_summary(team_name: str, location: str) -> Dict:
     vic = extract_team_victory(team_name)
     t_ha_eval = home_away_evaluation(vic)
     t_ha_eval = t_ha_eval[location]
+    summary = t1_ous
+
+    # Count games
+    total_games = []
+    total_games.extend(vic.home)
+    total_games.extend(vic.away)
+    summary = summary | {'Games': len(total_games)}
 
     # for location based win
     local_1x2 = ''
@@ -201,11 +212,11 @@ def team_summary(team_name: str, location: str) -> Dict:
             local_1x2 = x
         elif t_ha_eval[x] == highest:
             local_1x2 += x
-    
-    summary = t1_ous | {'local_1x2': local_1x2}
+
+    summary = summary | {'local_1x2': local_1x2}
 
     c_vic = extract_team_combined_victory(team_name)
-    
+
     vivv = range_matches_evaluation(c_vic)
 
     # for the overal win rate

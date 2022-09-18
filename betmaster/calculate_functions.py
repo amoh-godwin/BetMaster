@@ -43,12 +43,12 @@ def range_matches_evaluation(scores: Dict, length: int = 0) -> Dict:
     ha = scores.victories[0:length]
 
     total = len(ha)
-    if total: # for  now
+    if total:
         w = round((ha.count('W') / total) * 100)
         d = round((ha.count('D') / total) * 100)
         l = round((ha.count('L') / total) * 100)
     else:
-        w, d, l = (0, 0, 0)
+        w, d, l = (0, 0, 0) # for now
 
     return {'W': w, 'D': d, 'L': l}
 
