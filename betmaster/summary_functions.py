@@ -6,10 +6,12 @@ from typing import Dict
 
 from extract_functions import extract_h2h, extract_team_victory, extract_team_combined_victory, extract_team_scores
 from calculate_functions import *
+from algorithms import *
 
 
 def main_summary(team1: str, team2: str) -> Dict:
     summary = {'1x2': '', 'HomeGoal': 0, 'AwayGoal': 0}
+    final_summary = {}
     team1_sum = team_summary(team1, 'home')
     team2_sum = team_summary(team2, 'away')
     h2h = h2h_summary(team1, team2)
@@ -35,6 +37,13 @@ def main_summary(team1: str, team2: str) -> Dict:
         over = avg - 0.5
         summary['AwayOver'] = round(over, 2)
 
+    if 'Updated Predicted GF(3)' in team1_sum and 'Updated Predicted GA(3)' in team2_sum:
+        updated1 = team1_sum['Updated Predicted GF(3)'] + team2_sum['Updated Predicted GA(3)']
+        summary['home_gf_avg'] = round(updated1 / 2, 2)
+    if 'Updated Predicted GF(3)' in team2_sum and 'Updated Predicted GA(3)' in team1_sum:
+        updated2 = team2_sum['Updated Predicted GF(3)'] + team1_sum['Updated Predicted GA(3)']
+        summary['away_gf_avg'] = round(updated2 / 2, 2)
+
     t1_gf = int((team1_sum['GF'] + team2_sum['GA']) / 2)
     t2_gf = int((team1_sum['GA'] + team2_sum['GF']) / 2)
     if t1_gf > 80:
@@ -42,7 +51,16 @@ def main_summary(team1: str, team2: str) -> Dict:
     if t2_gf > 80:
         summary['AwayGoal'] = t2_gf
 
-    return summary
+    if 'HomeOver' in summary and 'AwayOver' in summary:
+        summary['Over'] = round((summary['HomeOver'] + summary['AwayOver']) - 0.5, 2)
+
+    algo_map = {'Away': away_algorithm, 'Home': home_algorithm, 'Draw': draw_algorithm}
+    try:
+        final_summary = algo_map[summary['1x2']](summary)
+    except:
+        final_summary = summary
+
+    return summary | final_summary
 
 
 def h2h_summary(team1: str, team2: str) -> Dict:
@@ -78,6 +96,7 @@ def h2h_summary(team1: str, team2: str) -> Dict:
         for y in local_h2hs:
             local_1x2 = ''
             highest = 0
+
             for x in y:
                 if y[x] > highest:
                     highest = y[x]
@@ -124,7 +143,8 @@ def over_under_summary(team_name) -> Dict:
         'Recent GF(5)': mrgf_5, 'Recent GF(10)': mrgf_10, 
         'Recent GA(5)': mrga_5, 'Recent GA(10)': mrga_10,
         'Predicted GF(5)': p5, 'Predicted GF(10)': p10,
-        'Predicted GA(5)': pa5, 'Predicted GA(10)': pa10} """
+        'Predicted GA(5)': pa5, 'Predicted GA(10)': pa10,
+        'Updated Predicted GF(3)': p3, 'Updated Predicted GA(3)': pa3} """
 
     summary = {}
     over_under_keys = (
@@ -139,8 +159,8 @@ def over_under_summary(team_name) -> Dict:
     gaou = over_under_evaluation(scores.ga)
     mrgf_5, mrgf_10 = most_recent_over_under(scores.gf)
     mrga_5, mrga_10 = most_recent_over_under(scores.ga)
-    p5, p10 = predict_over_under(scores.gf)
-    pa5, pa10 = predict_over_under(scores.ga)
+    p3, p5, p10 = predict_over_under(scores.gf)
+    pa3, pa5, pa10 = predict_over_under(scores.ga)
     pgf_avg = final_predict_over_under(p5[-1], p10[-1])
     pga_avg = final_predict_over_under(pa5[-1], pa10[-1])
 
@@ -153,6 +173,11 @@ def over_under_summary(team_name) -> Dict:
     if pga_avg >= 1.0:
         summary['Predicted GA AVG'] = pga_avg
         summary['Predicted GA(10)'] = pa10
+    
+    if p3[-1] >= 1.0:
+        summary['Updated Predicted GF(3)']: p3[-1]
+    if pa3[-1] >= 1.0:
+        summary['Updated Predicted GA(3)']: pa3[-1]
 
     summary['Recent GF'] = int((mrgf_5 + mrgf_10) / 2)
     summary['Recent GA'] = int((mrga_5 + mrga_10) / 2)
@@ -167,7 +192,6 @@ def team_summary(team_name: str, location: str) -> Dict:
     t_ha_eval = home_away_evaluation(vic)
     t_ha_eval = t_ha_eval[location]
 
-    
     # for location based win
     local_1x2 = ''
     highest = 0
