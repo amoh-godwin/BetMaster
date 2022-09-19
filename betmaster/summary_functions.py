@@ -10,7 +10,7 @@ from algorithms import *
 
 
 def main_summary(team1: str, team2: str) -> Dict:
-    summary = {'1x2': '', 'HomeGoal': 0, 'AwayGoal': 0}
+    summary = {'1x2': '', 'HomeGoal': 0, 'AwayGoal': 0, 'RHG': 0, 'RAG': 0}
     final_summary = {}
     team1_sum = team_summary(team1, 'home')
     team2_sum = team_summary(team2, 'away')
@@ -54,6 +54,12 @@ def main_summary(team1: str, team2: str) -> Dict:
         summary['HomeGoal'] = t1_gf
     if t2_gf > 80:
         summary['AwayGoal'] = t2_gf
+
+    # Recent
+    rt1_gf = int((team1_sum['Recent GF'] + team2_sum['Recent GA']) / 2)
+    rt2_gf = int((team1_sum['Recent GA'] + team2_sum['Recent GF']) / 2)
+    summary['RHG'] = rt1_gf
+    summary['RAG'] = rt2_gf
 
     if 'HomeOver' in summary and 'AwayOver' in summary:
         summary['Over'] = round((summary['HomeOver'] + summary['AwayOver']) - 0.5, 2)
