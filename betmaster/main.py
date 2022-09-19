@@ -19,10 +19,10 @@ for x in matches:
     #except Exception:
     #    one = 'Error while processing'
 
-    if 'HomeOver' not in one or 'AwayOver' not in one:
+    """ if 'HomeOver' not in one or 'AwayOver' not in one:
         continue
 
     if one['Over'] < 1.99:
-        continue
+        continue """
 
     print(f'\n{x.home_name} vs {x.away_name} : {one}\n')
