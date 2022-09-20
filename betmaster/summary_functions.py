@@ -177,16 +177,16 @@ def over_under_summary(team_name) -> Dict:
     # Summary
     summary['GF'] = gfou
     summary['GA'] = gaou
-    if pgf_avg >= 1.0:
+    if pgf_avg >= 0.09:
         summary['Predicted GF AVG'] = pgf_avg
         summary['Predicted GF(10)'] = p10
-    if pga_avg >= 1.0:
+    if pga_avg >= 0.09:
         summary['Predicted GA AVG'] = pga_avg
         summary['Predicted GA(10)'] = pa10
     
-    if p3[-1] >= 1.0:
+    if p3[-1] >= 0.09:
         summary['Updated Predicted GF(3)']: p3[-1]
-    if pa3[-1] >= 1.0:
+    if pa3[-1] >= 0.09:
         summary['Updated Predicted GA(3)']: pa3[-1]
 
     summary['Recent GF'] = int((mrgf_5 + mrgf_10) / 2)
