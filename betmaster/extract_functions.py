@@ -90,7 +90,10 @@ def extract_not_started() -> List:
 
     for x in all:
         if "data-status='-'" in x:
-            teams.extend(extract_team_data(x))
+            data = extract_team_data(x)
+            now = datetime.timestamp(datetime.now())
+            if data[0].date > now:
+                teams.extend(data)
 
     return teams
 
@@ -261,7 +264,7 @@ def extract_team_victory(name: str) -> Dict:
     return team_victory
 
 
-def extract_team_data(div: str) -> List:
+def extract_team_data(div: str) -> List[Team]:
     id, date, s1, s2, t1, t2, tn1, tn2 = extract_data(div)
     teams = [Team(int(id), t1, tn1, t2, tn2, int(date))]
     return teams
