@@ -14,10 +14,10 @@ print(summ) """
 matches = extract_not_started()
 
 for x in matches:
-    #try:
-    one = main_summary(x.home, x.away)
-    #except Exception:
-    #    one = 'Error while processing'
+    try:
+        one = main_summary(x.home, x.away)
+    except Exception:
+        one = 'Error while processing'
 
     """ if 'HomeOver' not in one or 'AwayOver' not in one:
         continue
