@@ -13,8 +13,11 @@ def main_summary(team1: str, team2: str) -> Dict:
     summary = {'1x2': '', 'HomeGoal': 0, 'AwayGoal': 0, 'RHG': 0, 'RAG': 0, 'Under': 0}
     final_summary = {}
     team1_sum = team_summary(team1, 'home')
+    print(team1_sum, '\n')
     team2_sum = team_summary(team2, 'away')
+    print(team2_sum, '\n')
     h2h = h2h_summary(team1, team2)
+    print(h2h, '\n')
 
     victory_sum = victory_summary(team1_sum, team2_sum, h2h)
 
