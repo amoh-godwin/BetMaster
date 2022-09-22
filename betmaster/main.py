@@ -7,10 +7,10 @@ from summary_functions import main_summary
 from extract_functions import extract_not_started
 
 
-""" 
-summ = main_summary('banants-ii', 'fc-avan-academy')
-print(summ) """
 
+""" summ = main_summary('cd-luis-angel-firpo', 'cd-aguila')
+print(summ, '\n')
+ """
 matches = extract_not_started()
 
 for x in matches:
@@ -26,3 +26,4 @@ for x in matches:
         continue """
 
     print(f'\n{x.home_name} vs {x.away_name} : {one}\n')
+    print(f'*****************\n')
