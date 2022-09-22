@@ -26,6 +26,7 @@ def get_team_data(team_name: str) -> str:
 def get_not_started() -> str:
 
     today = str(date.today())
+    # today = '2022-09-23'
     fileName = 'not_started_' + today + '.txt'
     conts = get_file(fileName)
 
