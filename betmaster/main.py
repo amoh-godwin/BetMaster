@@ -25,5 +25,11 @@ for x in matches:
     if one['Over'] < 1.99:
         continue """
 
+    if 'Over' not in one:
+        continue
+
+    if one['Over'] < 1.59 and one['Under'] == 0:
+        continue
+
     print(f'\n{x.home_name} vs {x.away_name} : {one}\n')
     print(f'*****************\n')
